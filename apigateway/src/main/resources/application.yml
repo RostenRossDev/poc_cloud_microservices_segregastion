@@ -1,20 +1,20 @@
-spring:
-  cloud:
-    gateway:
-      routes:
-      - id: config-server
-        uri: lb://config-server
-        predicates:
-          - path=/api/config-server/**
-      - id: psg
-        uri: lb://psg
-        predicates:
-          - Path=/api/psg/**
-        filters:
-          - StripPrefix=2
-      - id: servicio-items
-        uri: lb://servicio-items
-        predicates:
-          - Path=/api/items/**
-        filters:
-          - StripPrefix=2
+#spring:
+#  cloud:
+#    gateway:
+#      routes:
+#      - id: config-server
+#        uri: lb://config-server
+#        predicates:
+#          - path=/api/config-server/**
+#      - id: psg
+#        uri: lb://psg
+#        predicates:
+#          - Path=/api/psg/**
+#        filters:
+#          - StripPrefix=2
+#      - id: servicio-items
+#        uri: lb://servicio-items
+#        predicates:
+#          - Path=/api/items/**
+#        filters:
+#          - StripPrefix=2

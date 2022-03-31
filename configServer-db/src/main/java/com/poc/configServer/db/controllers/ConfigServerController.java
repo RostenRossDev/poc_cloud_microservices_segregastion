@@ -2,6 +2,7 @@ package com.poc.configServer.db.controllers;
 
 import com.netflix.discovery.converters.Auto;
 import com.poc.configServer.db.entity.DbPropertie;
+import com.poc.configServer.db.hilos.AsyncRefreshMicroservices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -25,7 +26,28 @@ public class ConfigServerController {
 
     @Auto
     Environment env;
+    @PostMapping("/{canal}")
+    public ResponseEntity<?> pruebaPropagarRefresh(@PathVariable String canal, @RequestBody DbPropertie newPropertie){
+        if(true){
+            HttpHeaders headers = new HttpHeaders();
+            HttpEntity<String> configServerRequest = new HttpEntity<String>(headers);
+            HttpEntity<String> eurekaRequest = new HttpEntity<String>(headers);
+            //se refresca el config server
+            ResponseEntity<String> configServerResponse = (ResponseEntity<String>) makeRequest(configServerRequest,
+                    "http://127.0.0.1:"+env.getProperty("server.port")+"/actuator/refresh",
+                    String.class);
 
+            //llamar a pedir los endpoints del eureka
+            ResponseEntity<List<String>> instanciasToUpdate = (ResponseEntity<List<String>>) makeRequest(eurekaRequest, StringConstants.EUREKA_INSTANCIAS_ENDPOINT.concat("canal"),
+                    String.class);
+
+            //si se actualizo el config server entonces se llamaria a actualizar las instancias.
+            if(confirmResponse(configServerResponse) && confirmResponse(instanciasToUpdate)){
+                actualizarInstancias(instanciasToUpdate.getBody());
+            }
+        }
+        return new ResponseEntity<Map<String, Object>>(AsyncRefreshMicroservices.REFRESH_MICRO_RESPONSES.get(), HttpStatus.OK);
+    }
     @PostMapping("/{canal}")
     public ResponseEntity<?> agregarPropiedad(@PathVariable String canal, @RequestBody DbPropertie newPropertie){
         Map<String, Object> res = new HashMap<>(); //body response
@@ -45,16 +67,16 @@ public class ConfigServerController {
                     String.class);
 
             //llamar a pedir los endpoints del eureka
-            List<String> instanciasToUpdate = (List<String>) makeRequest(eurekaRequest, StringConstants.EUREKA_INSTANCIAS_ENDPOINT.concat("canal"),
+            ResponseEntity<List<String>> instanciasToUpdate = (ResponseEntity<List<String>>) makeRequest(eurekaRequest, StringConstants.EUREKA_INSTANCIAS_ENDPOINT.concat("canal"),
                     String.class);
 
             //si se actualizo el config server entonces se llamaria a actualizar las instancias.
-            if(confirmResponse(configServerResponse)){
-                actualizarInstancias(instanciasToUpdate);
+            if(confirmResponse(configServerResponse) && confirmResponse(instanciasToUpdate)){
+                actualizarInstancias(instanciasToUpdate.getBody());
             }
         }
 
-        return null;
+        return new ResponseEntity<Map<String, Object>>(AsyncRefreshMicroservices.REFRESH_MICRO_RESPONSES.get(), HttpStatus.OK);
     }
 
     private boolean confirmResponse(ResponseEntity<?> res){
@@ -70,10 +92,17 @@ public class ConfigServerController {
         return response;
     }
 
-    private List<ResponseEntity<?>> actualizarInstancias(List<String> instanciasToUpdate){
+    private void actualizarInstancias(List<String> instanciasToUpdate){
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
 
-        return null;
+        for (String baseUrl: instanciasToUpdate) {
+            AsyncRefreshMicroservices newAsyncRefreshRequest=new AsyncRefreshMicroservices(restTemplate, headers, baseUrl);
+            Thread newThread=new Thread(newAsyncRefreshRequest);
+            newThread.start();
+        }
+
+
     }
 
-    private RefreshInstance
 }
