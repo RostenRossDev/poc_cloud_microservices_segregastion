@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController("/eureka")
+@RestController
 public class EurekaCustomController {
     private Logger log = LoggerFactory.getLogger(EurekaCustomController.class);
 

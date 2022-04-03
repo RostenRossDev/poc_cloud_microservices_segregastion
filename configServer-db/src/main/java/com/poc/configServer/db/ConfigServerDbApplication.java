@@ -16,4 +16,5 @@ public class ConfigServerDbApplication {
 		SpringApplication.run(ConfigServerDbApplication.class, args);
 	}
 
+	
 }

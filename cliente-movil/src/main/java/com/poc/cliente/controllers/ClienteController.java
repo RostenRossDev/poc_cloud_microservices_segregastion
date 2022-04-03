@@ -23,7 +23,6 @@ public class ClienteController {
     public ResponseEntity<?> getConfiguracion(){
         Map<String, Object> res = new HashMap<>();
         res.put("autor", env.getProperty("configuracion.author.name"));
-        res.put("canal", env.getProperty("canal"));
         res.put("texto", env.getProperty("configuracion.texto"));
         res.put("properties", env.toString());
 

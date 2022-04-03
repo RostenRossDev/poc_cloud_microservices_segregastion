@@ -8,5 +8,5 @@ import org.springframework.core.env.Environment;
 public class StringConstants {
 
     final static public String CRUD_POST_PROPERTIE_ENDPOINT = "";
-    final static public String EUREKA_INSTANCIAS_ENDPOINT = "http://127.0.0.1:8761/eureka/instancias";
+    final static public String EUREKA_INSTANCIAS_ENDPOINT = "http://127.0.0.1:8761/instancias";
 }
