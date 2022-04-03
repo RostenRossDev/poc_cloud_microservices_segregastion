@@ -35,13 +35,16 @@ public class ConfigServerController {
     @SuppressWarnings("unchecked")
 	@PostMapping("/{canal}")
     public ResponseEntity<?> propagarRefresh(@PathVariable String canal, @RequestBody DbPropertie newProperty){
+    	HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
     	Map<String, Object> response= new HashMap<>();
         ResponseEntity<Object> instanciasToUpdate;
         RestTemplate restTemplate = new RestTemplate();
         
-        HttpEntity<DbPropertie> dbRequest = new HttpEntity<>(newProperty);
-        ResponseEntity<DbPropertie> crudResponse
-        = (ResponseEntity<DbPropertie>) makeRequest(dbRequest, StringConstants.CRUD_POST_PROPERTIE_ENDPOINT,  DbPropertie.class);
+        HttpEntity<DbPropertie> dbRequest = new HttpEntity<>(newProperty, headers);
+        
+        ResponseEntity<DbPropertie> crudResponse = 
+        		restTemplate.postForEntity(StringConstants.CRUD_POST_PROPERTIE_ENDPOINT, dbRequest, DbPropertie.class);
         
         if(confirmResponse(crudResponse)){
         	Collection<String> key =null;

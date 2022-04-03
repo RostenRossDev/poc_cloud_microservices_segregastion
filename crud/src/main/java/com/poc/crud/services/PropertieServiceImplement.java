@@ -37,4 +37,10 @@ public class PropertieServiceImplement implements PropertieServiceInterface {
     public List<Propertie> selectAll() {
         return repository.findAll();
     }
+    
+    @Override
+    public List<Propertie> selectByKeyAndProfileAndLabelAndApplication(Propertie prop) {
+    	return repository.
+    			findByKeyAndProfileAndLabelAndApplication(prop.getKey(), prop.getProfile(), prop.getLabel(), prop.getApplication());
+    }
 }

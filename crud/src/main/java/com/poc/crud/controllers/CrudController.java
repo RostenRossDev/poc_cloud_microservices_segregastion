@@ -1,21 +1,24 @@
 package com.poc.crud.controllers;
 
-import com.netflix.discovery.converters.Auto;
 import com.poc.crud.entities.Propertie;
 import com.poc.crud.services.PropertieServiceImplement;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController("/crud")
+@RestController
 public class CrudController {
-
+	
+	private Logger log = LoggerFactory.getLogger(CrudController.class);
+	
     @Autowired
     PropertieServiceImplement propertieRepository;
 
@@ -36,9 +39,23 @@ public class CrudController {
 
     @PostMapping("/")
     public ResponseEntity<?> save(@RequestBody Propertie newProp) {
-        Propertie prop = propertieRepository.save(newProp);
         HttpStatus status;
         Map<String, Object> res = new HashMap<>();
+        //vemos si existe la properti en la db
+        List<Propertie> persistedProps = propertieRepository
+        		.selectByKeyAndProfileAndLabelAndApplication(newProp);
+        log.info("Lista de prop: "+persistedProps.toString());
+        
+        //Si existe, se modifica el value por el value nuevo
+        if(persistedProps.size() > 0) {
+        	Propertie persistedProp = persistedProps.get(0);
+        	newProp.setValue(persistedProp.getValue());
+        }
+        log.info("newProp: "+newProp);
+        //se guarda la properti
+        Propertie prop = propertieRepository.save(newProp);
+
+        //chekamos si se guardo la prop y respondemos segun corresponda
         if (!prop.getId().equals(null)) {
             res.put("property", prop);
             status = HttpStatus.OK;

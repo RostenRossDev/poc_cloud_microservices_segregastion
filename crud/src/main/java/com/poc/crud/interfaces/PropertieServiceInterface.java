@@ -15,4 +15,7 @@ public interface PropertieServiceInterface {
     Propertie select(Long id);
 
     List<Propertie> selectAll();
+    
+    List<Propertie> selectByKeyAndProfileAndLabelAndApplication(Propertie prop);
+
 }
