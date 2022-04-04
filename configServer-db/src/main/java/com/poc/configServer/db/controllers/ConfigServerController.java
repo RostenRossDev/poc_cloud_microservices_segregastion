@@ -50,12 +50,15 @@ public class ConfigServerController {
         HttpEntity<DbPropertie> dbRequest = new HttpEntity<>(newProperty, headers);
         log.info("property: "+newProperty.toString());
         log.info("property: "+newProperty.getValue());
+        //
         ResponseEntity<DbPropertie> crudResponse = 
         		restTemplate.postForEntity(StringConstants.CRUD_POST_PROPERTIE_ENDPOINT, dbRequest, DbPropertie.class);
         
         if(confirmResponse(crudResponse)){
         	Collection<String> key =null;
-        	key = contextRefresher.refreshEnvironment();  
+        	key = contextRefresher.refreshEnvironment(); 
+        	log.info("key: "+contextRefresher.toString());
+        	
         	if(!key.equals(null)) {
             	log.info("Config server refrescado con exito");
             	log.info("Consiguiendo rutas de los micros a actualizar.");

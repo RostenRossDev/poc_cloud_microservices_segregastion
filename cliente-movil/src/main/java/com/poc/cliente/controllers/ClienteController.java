@@ -24,7 +24,7 @@ public class ClienteController {
         Map<String, Object> res = new HashMap<>();
         res.put("autor", env.getProperty("configuracion.author.name"));
         res.put("texto", env.getProperty("configuracion.texto"));
-        res.put("pais", env.getProperty("pais"));
+        res.put("departamento", env.getProperty("departamento"));
         res.put("properties", env.toString());
 
         return new ResponseEntity<Map<String, Object>>(res, HttpStatus.OK);
