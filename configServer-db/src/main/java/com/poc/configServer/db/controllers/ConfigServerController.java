@@ -20,12 +20,15 @@ import com.poc.configServer.db.constants.StringConstants;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 
 @RefreshScope
@@ -57,6 +60,7 @@ public class ConfigServerController {
             	log.info("Config server refrescado con exito");
             	log.info("Consiguiendo rutas de los micros a actualizar.");
             	String eurekaInstancesEndpoints = StringConstants.EUREKA_INSTANCIAS_ENDPOINT.concat("/").concat(canal);
+            	
             	log.info("url: "+eurekaInstancesEndpoints);
 
             	instanciasToUpdate = restTemplate.getForEntity(eurekaInstancesEndpoints, Object.class);
@@ -68,11 +72,21 @@ public class ConfigServerController {
                 if(confirmResponse(instanciasToUpdate)){
                 	Map<String, Object> body = (Map<String, Object>) instanciasToUpdate.getBody();
 
+                	//las instancias pueden estar duplicadas en el registro del eureka
                 	List<String> instancesUrls =(List<String>) body.get("instancesUrls");
-                	log.info("urls: "+instancesUrls);
+                	
+                	//se convierte a la lista en un set para eliminar duplicados
+                	Set<String> noDuplicateInstancesUrls = new HashSet<String>(instancesUrls.stream().collect(Collectors.toSet()));
+                	log.info("urls antes de aplicar el Set: "+instancesUrls);
+
+                	//limpiamos la lista 
+                	instancesUrls.clear();
+                	//convertimos al set en una lista nuevamente
+                	instancesUrls.addAll(noDuplicateInstancesUrls);
+                	log.info("urls despues de aplicar el Set: "+instancesUrls);
                 	
                     List<String> instanciasActualizada = actualizarInstancias(instancesUrls);                
-                	
+                    instanciasActualizada.stream().forEach(in -> log.info("instancia :"+in));
                     response.put("actualizadas", instanciasActualizada);
                 }
                 

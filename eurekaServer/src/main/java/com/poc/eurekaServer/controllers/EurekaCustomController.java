@@ -35,8 +35,11 @@ public class EurekaCustomController {
         HttpStatus status ;
         StatusInfo statusInfo;
         PeerAwareInstanceRegistryImpl registry = (PeerAwareInstanceRegistryImpl) getRegistry();
+        //guardamos las instancias en una lista de applicaciones, pero si hay registros duplicados tambien estaran en la lista
         List<com.netflix.discovery.shared.Application> sortedApplications = getRegistry().getSortedApplications();
 
+        
+        
         try {
             statusInfo = new StatusResource().getStatusInfo();
 
