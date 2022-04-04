@@ -1,10 +1,20 @@
 package com.poc.crud.entities;
 
-import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
-@Entity(name = "properties")
-public class Propertie {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "properties")
+public class Propertie implements Serializable{
+	private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -94,4 +104,11 @@ public class Propertie {
     public void setCreated_on(Date created_on) {
         this.created_on = created_on;
     }
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString();
+	}
+    
 }

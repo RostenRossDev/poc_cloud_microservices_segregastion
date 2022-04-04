@@ -41,6 +41,11 @@ public class CrudController {
     public ResponseEntity<?> save(@RequestBody Propertie newProp) {
         HttpStatus status;
         Map<String, Object> res = new HashMap<>();
+        log.info("App: "+newProp.getApplication());
+        log.info("key: "+newProp.getLabel());
+        log.info("profile: "+newProp.getProfile());
+        log.info("value: "+newProp.getValue());
+
         //vemos si existe la properti en la db
         List<Propertie> persistedProps = propertieRepository
         		.selectByKeyAndProfileAndLabelAndApplication(newProp);
@@ -49,12 +54,17 @@ public class CrudController {
         //Si existe, se modifica el value por el value nuevo
         if(persistedProps.size() > 0) {
         	Propertie persistedProp = persistedProps.get(0);
-        	newProp.setValue(persistedProp.getValue());
+        	newProp.setId(persistedProp.getId());
         }
-        log.info("newProp: "+newProp);
+        
+        log.info("newProp: "+newProp.toString());
+        log.info("App: "+newProp.getApplication());
+        log.info("key: "+newProp.getLabel());
+        log.info("profile: "+newProp.getProfile());
+        log.info("value: "+newProp.getValue());
         //se guarda la properti
         Propertie prop = propertieRepository.save(newProp);
-
+        
         //chekamos si se guardo la prop y respondemos segun corresponda
         if (!prop.getId().equals(null)) {
             res.put("property", prop);

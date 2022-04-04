@@ -3,28 +3,20 @@ package com.poc.configServer.db.entity;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity(name = "properties")
 public class DbPropertie {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+   
     private Long id;
 
-    @Column(name = "PROP_KEY")
     private String key;
 
-    @Column(name = "VALUE")
     private String value;
 
-    @Column(name = "APPLICATION")
     private String application;
 
-    @Column(name = "PROFILE")
     private String profile;
 
-    @Column(name = "LABEL")
     private String label;
 
-    @Column(name = "CREATED_ON")
     private Date created_on;
 
     public DbPropertie(){}
@@ -94,4 +86,11 @@ public class DbPropertie {
     public void setCreated_on(Date created_on) {
         this.created_on = created_on;
     }
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString();
+	}
+    
 }
